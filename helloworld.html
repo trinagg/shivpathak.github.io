@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            background: rgb(52, 185, 229);
+            margin: 200px;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            text-align: center;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        #background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            opacity: 1; 
+            z-index: -1; 
+        }
+        #weather-info {
+            margin-top: 20px;
+        }    
+        h1 {
+            position: relative;
+            z-index: 1; 
+        }
+    </style>
+</head>
+<body>
+    <img id="background-image" src="C:\Users\Home\Downloads\img.jpg" alt="Weather Background">
+    <h1>Weather App</h1>
+
+    <label for="city">Select City:</label>
+    <select id="city">
+        <option value="Tirana,Albania">Tirana, Albania</option>
+        <option value="Andorra la Vella,Andorra">Andorra la Vella, Andorra</option>
+        <option value="Yerevan,Armenia">Yerevan, Armenia</option>
+        <option value="Vienna,Austria">Vienna, Austria</option>
+        <option value="Baku,Azerbaijan">Baku, Azerbaijan</option>
+        <option value="Minsk,Belarus">Minsk, Belarus</option>
+        <option value="Brussels,Belgium">Brussels, Belgium</option>
+        <option value="Sarajevo,Bosnia">Sarajevo, Bosnia</option>
+        <option value="Sofia,Bulgaria">Sofia, Bulgaria</option>
+        <option value="Zagreb,Croatia">Zagreb, Croatia</option>
+        <option value="Nicosia,Cyprus">Nicosia, Cyprus</option>
+        <option value="Prague,Czech Republic">Prague, Czech Republic</option>
+        <option value="Copenhagen,Denmark">Copenhagen, Denmark</option>
+        <option value="Tallinn,Estonia">Tallinn, Estonia</option>
+        <option value="Helsinki,Finland">Helsinki, Finland</option>
+        <option value="Paris,France">Paris, France</option>
+        <option value="Tbilisi,Georgia">Tbilisi, Georgia</option>
+        <option value="Berlin,Germany">Berlin, Germany</option>
+        <option value="Athens,Greece">Athens, Greece</option>
+        <option value="Budapest,Hungary">Budapest, Hungary</option>
+        <option value="Reykjavik,Iceland">Reykjavik, Iceland</option>
+        <option value="Dublin,Ireland">Dublin, Ireland</option>
+        <option value="Rome,Italy">Rome, Italy</option>
+        <option value="Nur-Sultan,Kazakhstan">Nur-Sultan, Kazakhstan</option>
+        <option value="Riga,Latvia">Riga, Latvia</option>
+        <option value="Vaduz,Liechtenstein">Vaduz, Liechtenstein</option>
+        <option value="Vilnius,Lithuania">Vilnius, Lithuania</option>
+        <option value="Luxembourg,Luxembourg">Luxembourg, Luxembourg</option>
+        <option value="Valletta,Malta">Valletta, Malta</option>
+        <option value="Chisinau,Moldova">Chisinau, Moldova</option>
+        <option value="Monaco,Monaco">Monaco, Monaco</option>
+        <option value="Podgorica,Montenegro">Podgorica, Montenegro</option>
+        <option value="Amsterdam,Netherlands">Amsterdam, Netherlands</option>
+        <option value="Oslo,Norway">Oslo, Norway</option>
+        <option value="Warsaw,Poland">Warsaw, Poland</option>
+        <option value="Lisbon,Portugal">Lisbon, Portugal</option>
+        <option value="Bucharest,Romania">Bucharest, Romania</option>
+        <option value="Moscow,Russia">Moscow, Russia</option>
+        <option value="San Marino,San Marino">San Marino, San Marino</option>
+        <option value="Belgrade,Serbia">Belgrade, Serbia</option>
+        <option value="Bratislava,Slovakia">Bratislava, Slovakia</option>
+        <option value="Ljubljana,Slovenia">Ljubljana, Slovenia</option>
+        <option value="Madrid,Spain">Madrid, Spain</option>
+        <option value="Stockholm,Sweden">Stockholm, Sweden</option>
+        <option value="Bern,Switzerland">Bern, Switzerland</option>
+        <option value="Ankara,Turkey">Ankara, Turkey</option>
+        <option value="Kyiv,Ukraine">Kyiv, Ukraine</option>
+        <option value="London,United Kingdom">London, United Kingdom</option>
+        <option value="Vatican City,Vatican City">Vatican City, Vatican City</option>
+        <!-- Add more cities as needed -->
+    </select>
+
+    <button onclick="getWeather()">Get Weather</button>
+
+    <div id="weather-info"></div>
+
+    <script>
+        function getWeather() {
+            var citySelect = document.getElementById('city');
+            var selectedCityAndCountry = citySelect.value;
+
+            if (!selectedCityAndCountry) {
+                alert('Please select a city.');
+                return;
+            }
+
+            var [city, country] = selectedCityAndCountry.split(',');
+
+            // You can use a geocoding service to get the coordinates for the selected city and country
+            // and then construct the 7Timer API URL based on those coordinates.
+
+            // For simplicity, we'll use a placeholder URL with coordinates for Paris.
+            var apiUrl = `http://www.7timer.info/bin/astro.php?lon=113.17&lat=23.09&ac=0&lang=en&unit=metric&output=internal&tzshift=0`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Process and display weather information
+                    displayWeather(data, city, country);
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                    alert('Error fetching weather data. Please try again.');
+                });
+        }
+
+        function displayWeather(data, city, country) {
+            var weatherInfo = document.getElementById('weather-info');
+            weatherInfo.innerHTML = ''; // Clear previous data
+
+            for (var i = 0; i < 7; i++) {
+                var weatherData = data.dataseries[i];
+
+                var date = new Date(weatherData.timepoint * 1000); // Convert timestamp to date
+                var temperature = weatherData.temp2m;
+                var description = weatherData.weather;
+                var windSpeed = weatherData.wind10m;
+
+                var weatherHtml = `
+                    <p>City: ${city}</p>
+                    <p>Country: ${country}</p>
+                    <p>Date: ${date.toDateString()}</p>
+                    <p>Temperature: ${temperature}°C</p>
+                    <p>Description: ${description}</p>
+                    <p>Wind Speed: ${windSpeed.toFixed(2)} m/s</p>
+                    <hr>
+                `;
+
+                weatherInfo.innerHTML += weatherHtml;
+            }
+        }
+    </script>
+
+</body>
+</html>
